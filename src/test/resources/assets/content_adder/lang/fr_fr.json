@@ -1,0 +1,7 @@
+{
+  "item.content_adder_test.text_item": "Item Test",
+
+  "block.content_adder_test.test_block": "Bloc Test",
+
+  "chat.content_adder.can_not_place_note_block": "Les blocs Notes sont désactivés, ils sont utilisés pour les blocs personnalisés."
+}

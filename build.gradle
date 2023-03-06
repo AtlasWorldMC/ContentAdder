@@ -1,0 +1,77 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
+}
+
+group = 'fr.atlasworld.content'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        name = "CodeMC"
+        url = "https://repo.codemc.io/repository/maven-public/"
+    }
+    maven {
+        name = "ProtocolLib"
+        url = "https://repo.dmulloy2.net/repository/public/"
+    }
+}
+
+dependencies {
+    compileOnly "io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT"
+    compileOnly "de.tr7zw:item-nbt-api-plugin:${nbt_api_version}"
+    compileOnly "com.comphenix.protocol:ProtocolLib:${protocol_version}"
+    compileOnly 'com.pushtorefresh:javac-warning-annotation:1.0.0'
+
+    //Test
+    testCompileOnly "io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT"
+    testCompileOnly "de.tr7zw:item-nbt-api-plugin:${nbt_api_version}"
+    testCompileOnly "com.comphenix.protocol:ProtocolLib:${protocol_version}"
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+tasks.register('moveJar', Copy) {
+    from layout.buildDirectory.dir("$buildDir/libs")
+    include "**/*.jar"
+    into layout.projectDirectory.dir("/run/plugins")
+}
+
+tasks.register('testJar', ShadowJar) {
+    archiveClassifier.set("test")
+    from sourceSets.main.java, sourceSets.test.output
+    configurations = [project.configurations.testRuntimeClasspath]
+}

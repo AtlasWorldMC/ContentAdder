@@ -1,0 +1,7 @@
+{
+  "item.content_adder_test.test_item": "Test Item",
+
+  "block.content_adder_test.test_block": "Test Block",
+
+  "chat.content_adder.can_not_place_note_block": "Note Block are disabled, they are being used for custom blocks."
+}

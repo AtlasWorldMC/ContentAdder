@@ -1,0 +1,12 @@
+name: ContentAdderTest
+version: '${version}'
+main: fr.atlasworld.content.test.ContentAdderTest
+api-version: 1.18
+authors: [ AtlasTeam ]
+description: Java API to easly add item, blocks and entity to the game
+website: https://atlasworld.fr
+load: STARTUP
+depend:
+  - NBTAPI
+  - ContentAdder
+  - ProtocolLib
