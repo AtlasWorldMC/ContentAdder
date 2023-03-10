@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
@@ -74,9 +75,11 @@ public class CustomItem {
         return properties.getMaxStackSize();
     }
 
-    public void onUse(Player player, Block usedBlock, Action action, BlockFace face, Location location) {}
-    public void onAttack(Player player, Entity target, double damage) {}
-    public void onScroll(Player player) {}
+    public void onItemUse(Player player, Block usedBlock, Action action, BlockFace face, Location location) {}
+    public void onHurtEntity(Player player, Entity target, double damage) {}
+    public void onItemDropped(Player player, Item droppedItem) {}
+    public void onItemDestroyed(Item itemEntity) {}
+    public void onItemHeld(Player player, int currentSlot, int previousSlot) {}
 
     @Override
     public boolean equals(Object obj) {

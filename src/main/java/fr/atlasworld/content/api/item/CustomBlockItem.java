@@ -8,6 +8,7 @@ import fr.atlasworld.content.registering.Registry;
 import fr.atlasworld.content.utils.WorldUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,11 +18,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CustomBlockItem extends CustomItem{
-    private final CustomBlock block;
-    private boolean canPlace;
+    protected final CustomBlock block;
+    protected boolean canPlace;
     public CustomBlockItem(Material material, ItemProperties properties, CustomBlock block) {
         super(material, properties);
         this.block = block;
@@ -29,7 +31,7 @@ public class CustomBlockItem extends CustomItem{
     }
 
     @Override
-    public void onUse(Player player, Block clickedBlock, Action action, BlockFace face, Location location) {
+    public void onItemUse(Player player, Block clickedBlock, Action action, BlockFace face, Location location) {
         if (clickedBlock == null) return;
         if (action.isRightClick()) {
             if (!canPlace) {
@@ -37,7 +39,10 @@ public class CustomBlockItem extends CustomItem{
             }
             canPlace = false;
             Bukkit.getScheduler().runTaskLater(ContentAdder.plugin, () -> canPlace = true, 3);
-            WorldUtils.placeCustomBlock(player, clickedBlock, face, block,false);
+            WorldUtils.placeCustomBlock(player, clickedBlock, face, block,false, true);
+            if (player.getGameMode().equals(GameMode.SURVIVAL)) {
+                player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() -1);
+            }
         }
     }
 
@@ -50,6 +55,7 @@ public class CustomBlockItem extends CustomItem{
         ItemStack item = super.getItem();
         ItemMeta meta = item.getItemMeta();
         meta.displayName(block.getDisplayName());
+        meta.lore(block.appendLore(new ArrayList<>()));
         item.setItemMeta(meta);
         return item;
     }

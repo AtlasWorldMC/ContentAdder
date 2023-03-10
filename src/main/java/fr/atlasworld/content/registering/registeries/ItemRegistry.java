@@ -1,7 +1,7 @@
 package fr.atlasworld.content.registering.registeries;
 
 import fr.atlasworld.content.ContentAdder;
-import fr.atlasworld.content.api.Identifier;
+import fr.atlasworld.content.api.utils.Identifier;
 import fr.atlasworld.content.api.item.CustomItem;
 import fr.atlasworld.content.registering.RegistryEntry;
 import fr.atlasworld.content.registering.RegistryEventListener;
@@ -43,6 +43,7 @@ public class ItemRegistry implements RegistryEntry<CustomItem> {
 
     @Override
     public void register(Identifier identifier, CustomItem entry) {
+        if (containsIdentifier(identifier)) throw new IllegalArgumentException("Only one item can be registered with id '" + identifier + "'!");
         registeredEntries.add(new AbstractMap.SimpleEntry<>(identifier, entry.setDisplayName(Component.translatable("item." + identifier.getNamespace() + "." + identifier.getName()).decoration(TextDecoration.ITALIC, false))));
         eventListeners.forEach(listener -> listener.onEntryRegister(identifier, entry));
     }

@@ -1,7 +1,7 @@
 package fr.atlasworld.content.registering;
 
 import com.pushtorefresh.javac_warning_annotation.Warning;
-import fr.atlasworld.content.api.Identifier;
+import fr.atlasworld.content.api.utils.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

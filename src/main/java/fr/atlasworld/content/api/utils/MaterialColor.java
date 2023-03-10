@@ -1,6 +1,4 @@
-package fr.atlasworld.content.api.block.material;
-
-import org.bukkit.Color;
+package fr.atlasworld.content.api.utils;
 
 public class MaterialColor {
     public static final MaterialColor NONE = new MaterialColor(0, 0);

@@ -1,33 +1,26 @@
 package fr.atlasworld.content.utils;
 
 import fr.atlasworld.content.api.block.CustomBlock;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorldUtils {
-    public static void placeCustomBlock(Player player, Block clickedBlock, BlockFace face, CustomBlock block, boolean force) {
+    public static void placeCustomBlock(Player player, Block clickedBlock, BlockFace face, CustomBlock block, boolean force, boolean tickBlocks) {
         Location newBlockLocation = clickedBlock.getLocation();
         if (!block.getReplaceableBlocks().contains(clickedBlock.getType())){
-            switch (face) {
-                case UP -> newBlockLocation.setY(newBlockLocation.getY() + 1);
-                case DOWN -> newBlockLocation.setY(newBlockLocation.getY() - 1);
-                case SOUTH -> newBlockLocation.setZ(newBlockLocation.getBlockZ() + 1);
-                case NORTH -> newBlockLocation.setZ(newBlockLocation.getBlockZ() - 1);
-                case EAST -> newBlockLocation.setX(newBlockLocation.getBlockX() + 1);
-                case WEST -> newBlockLocation.setX(newBlockLocation.getBlockX() - 1);
-            }
+            getLocationDirection(newBlockLocation, face);
         }
 
         if (!force) {
-            if (!block.getReplaceableBlocks().contains(newBlockLocation.getBlock().getType()) || new Location(newBlockLocation.getWorld(), newBlockLocation.getBlockX() + 0.5, newBlockLocation.getY() + 0.5, newBlockLocation.getBlockZ() + 0.5).getNearbyEntities(0.5, 0.5, 0.5).size() > 0) {
+            if (!block.getReplaceableBlocks().contains(newBlockLocation.getBlock().getType()) || new Location(newBlockLocation.getWorld(), newBlockLocation.getBlockX() + 0.5, newBlockLocation.getY() + 0.5, newBlockLocation.getBlockZ() + 0.5).getNearbyEntities(0.5, 0.5, 0.5).stream().filter(entity -> entity.getType() != EntityType.DROPPED_ITEM).toList().size() > 0) {
                 return;
             }
         }
@@ -35,13 +28,28 @@ public class WorldUtils {
         player.swingMainHand();
         Material oldBlockType = newBlockLocation.getBlock().getType();
         block.placeBlock(newBlockLocation.getBlock());
+        if (tickBlocks) {
+            blockio
+        }
 
         //Bukkit Event Stuff
         BlockPlaceEvent event = new BlockPlaceEvent(newBlockLocation.getBlock(), newBlockLocation.getBlock().getState(),
                 clickedBlock, player.getInventory().getItemInMainHand(), player, true, player.getHandRaised());;
         Bukkit.getPluginManager().callEvent(event);
         if (!force && event.isCancelled()) {
-            CustomBlock.replaceBlock(newBlockLocation.getBlock(), oldBlockType);
+            CustomBlock.removeCustomBlock(newBlockLocation.getBlock());
         }
+    }
+
+    public static Location getLocationDirection(Location loc, BlockFace face) {
+        switch (face) {
+            case UP -> loc.setY(loc.getY() + 1);
+            case DOWN -> loc.setY(loc.getY() - 1);
+            case SOUTH -> loc.setZ(loc.getBlockZ() + 1);
+            case NORTH -> loc.setZ(loc.getBlockZ() - 1);
+            case EAST -> loc.setX(loc.getBlockX() + 1);
+            case WEST -> loc.setX(loc.getBlockX() - 1);
+        }
+        return loc;
     }
 }

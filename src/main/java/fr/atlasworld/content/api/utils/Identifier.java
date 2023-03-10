@@ -1,6 +1,4 @@
-package fr.atlasworld.content.api;
-
-import java.nio.file.Path;
+package fr.atlasworld.content.api.utils;
 
 public class Identifier {
     private final String namespace;
@@ -12,7 +10,7 @@ public class Identifier {
     }
 
     public Identifier(String asString) {
-        if (!asString.contains(":")) throw new IllegalArgumentException("Invalid Identifier! 'namespace:name'!");
+        if (!asString.contains(":")) throw new IllegalArgumentException("Invalid Identifier! it must be 'namespace:name': " + asString);
         String[] splitIdentifier = asString.split(":");
         if (splitIdentifier.length > 2) throw new IllegalArgumentException("Only one ':' can be used in a Identifier! 'namespace:name'!");
         this.namespace = splitIdentifier[0];

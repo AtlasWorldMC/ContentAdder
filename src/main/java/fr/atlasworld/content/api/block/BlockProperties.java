@@ -1,6 +1,6 @@
 package fr.atlasworld.content.api.block;
 
-import fr.atlasworld.content.api.block.material.MaterialColor;
+import fr.atlasworld.content.api.utils.MaterialColor;
 import fr.atlasworld.content.api.sound.SoundGroup;
 import org.bukkit.Material;
 
@@ -15,12 +15,14 @@ public class BlockProperties {
     protected float destroyTime;
     protected boolean requireCorrectToolForDrops;
     protected List<Material> replaceableBlocks;
+    protected boolean pushable;
 
     public BlockProperties(MaterialColor color, SoundGroup.Block blockSounds) {
         this.color = color;
         this.blockSounds = blockSounds;
         this.requireCorrectToolForDrops = false;
         this.replaceableBlocks = new ArrayList<>();
+        this.pushable = true;
 
         //Hardcoded Default ReplaceableBlocks
         this.replaceableBlocks.add(Material.AIR);
@@ -30,6 +32,8 @@ public class BlockProperties {
         this.replaceableBlocks.add(Material.TALL_SEAGRASS);
         this.replaceableBlocks.add(Material.VINE);
         this.replaceableBlocks.add(Material.CAVE_VINES);
+        this.replaceableBlocks.add(Material.WATER);
+        this.replaceableBlocks.add(Material.LAVA);
     }
 
     public BlockProperties explosionResistance(float explosionResistance) {
@@ -56,6 +60,12 @@ public class BlockProperties {
         this.replaceableBlocks.addAll(Arrays.asList(replaceableBlocks));
         return this;
     }
+
+    public BlockProperties notPushable() {
+        this.pushable = false;
+        return this;
+    }
+
     public List<Material> getReplaceableBlocks() {
         return replaceableBlocks;
     }
@@ -78,5 +88,9 @@ public class BlockProperties {
 
     public SoundGroup.Block getBlockSounds() {
         return blockSounds;
+    }
+
+    public boolean isPushable() {
+        return pushable;
     }
 }

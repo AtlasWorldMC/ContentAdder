@@ -1,7 +1,7 @@
 package fr.atlasworld.content.registering.registeries;
 
 import fr.atlasworld.content.ContentAdder;
-import fr.atlasworld.content.api.Identifier;
+import fr.atlasworld.content.api.utils.Identifier;
 import fr.atlasworld.content.api.block.CustomBlock;
 import fr.atlasworld.content.api.block.CustomBlockState;
 import fr.atlasworld.content.registering.RegistryEntry;
@@ -44,6 +44,7 @@ public class BlockRegistry implements RegistryEntry<CustomBlock> {
 
     @Override
     public void register(Identifier identifier, CustomBlock entry) {
+        if (containsIdentifier(identifier)) throw new IllegalArgumentException("Only one block can be registered with id '" + identifier + "'!");
         registeredEntries.add(new AbstractMap.SimpleEntry<>(identifier, entry.setDisplayName(Component.translatable("block." + identifier.getNamespace() + "." + identifier.getName()).decoration(TextDecoration.ITALIC, false))));
         eventListeners.forEach(listener -> listener.onEntryRegister(identifier, entry));
     }

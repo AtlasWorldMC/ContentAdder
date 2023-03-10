@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class PlayerEvents implements Listener {
     @EventHandler

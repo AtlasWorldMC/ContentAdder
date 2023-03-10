@@ -1,10 +1,10 @@
 package fr.atlasworld.content;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import fr.atlasworld.content.listeners.BlockEventsListener;
+import fr.atlasworld.content.listeners.EntityEventsListener;
 import fr.atlasworld.content.listeners.ItemEventsListener;
-import fr.atlasworld.content.networking.NetworkHandler;
+import fr.atlasworld.content.listeners.PlayerEventsListener;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,10 +22,7 @@ public final class ContentAdder extends JavaPlugin {
     public void onEnable() {
         logger = getSLF4JLogger();
         plugin = this;
-        registerListeners(new ItemEventsListener(), new BlockEventsListener());
-
-        //Networking
-        NetworkHandler.registerNetwork(ProtocolLibrary.getProtocolManager());
+        registerListeners(new ItemEventsListener(), new BlockEventsListener(), new PlayerEventsListener(), new EntityEventsListener());
     }
 
     @Override
