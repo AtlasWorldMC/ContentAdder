@@ -28,9 +28,6 @@ public class WorldUtils {
         player.swingMainHand();
         Material oldBlockType = newBlockLocation.getBlock().getType();
         block.placeBlock(newBlockLocation.getBlock());
-        if (tickBlocks) {
-            blockio
-        }
 
         //Bukkit Event Stuff
         BlockPlaceEvent event = new BlockPlaceEvent(newBlockLocation.getBlock(), newBlockLocation.getBlock().getState(),
