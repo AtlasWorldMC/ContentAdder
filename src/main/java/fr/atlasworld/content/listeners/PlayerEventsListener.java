@@ -27,10 +27,12 @@ public class PlayerEventsListener implements Listener {
 
         if (event.getClickedBlock() != null && CustomBlock.isCustomBlock(event.getClickedBlock())) {
             if (event.getPlayer().isSneaking()) {
-                Player player = event.getPlayer();
-                if (!player.getInventory().getItemInMainHand().getType().isBlock()) return;
-                WorldUtils.applyFaceMod(event.getClickedBlock().getLocation(), event.getBlockFace()).getBlock().setType(player.getInventory().getItemInMainHand().getType());
-            } else CustomBlock.getCustomBlock(event.getClickedBlock()).onPlayerInteract(event.getPlayer(), event.getPlayer().getWorld(), event.getClickedBlock().getLocation(), event.getBlockFace());
+                if (event.getAction().isRightClick()) {
+                    Player player = event.getPlayer();
+                    if (!player.getInventory().getItemInMainHand().getType().isBlock()) return;
+                    WorldUtils.applyFaceMod(event.getClickedBlock().getLocation(), event.getBlockFace()).getBlock().setType(player.getInventory().getItemInMainHand().getType());
+                }
+            } else CustomBlock.getCustomBlock(event.getClickedBlock()).onPlayerInteract(event.getPlayer(), event.getPlayer().getWorld(), event.getClickedBlock().getLocation(), event.getBlockFace(), event.getAction());
         }
     }
 

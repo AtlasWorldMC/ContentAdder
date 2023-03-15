@@ -7,6 +7,7 @@ import fr.atlasworld.content.nbt.ContentNbtKeys;
 import fr.atlasworld.content.world.WorldUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -28,7 +29,7 @@ public class BlockEventsListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.getBlock().getType() == Material.NOTE_BLOCK && CustomBlock.isCustomBlock(event.getBlock())) {
             event.setCancelled(true);

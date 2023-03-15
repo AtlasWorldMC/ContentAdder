@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -75,7 +76,8 @@ public class CustomBlock {
     }
 
     public void onPlaced(Block block, World world, Location location) {}
-    public void onPlayerInteract(Player player, World world, Location location, BlockFace face) {
+    public void onPlayerInteract(Player player, World world, Location location, BlockFace face, Action action) {
+        if (action.isLeftClick()) return;
         if (!player.getInventory().getItemInMainHand().getType().isBlock()) return;
         WorldUtils.applyFaceMod(location, face).getBlock().setType(player.getInventory().getItemInMainHand().getType());
     }
