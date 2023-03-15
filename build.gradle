@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'xyz.jpenilla.run-paper' version '2.0.0'
     id 'java'
 }
 
@@ -39,6 +40,27 @@ dependencies {
     testCompileOnly "com.comphenix.protocol:ProtocolLib:${protocol_version}"
 }
 
+tasks.register('testJar', ShadowJar) {
+    archiveClassifier.set("test")
+    from sourceSets.main.java, sourceSets.test.output
+    configurations = [project.configurations.testRuntimeClasspath]
+}
+
+tasks.register('moveJar', Copy) {
+    from layout.buildDirectory.dir("$buildDir/libs")
+    include "ContentAdder-${version}-test.jar"
+    into layout.projectDirectory.dir("/run/plugins")
+}
+moveJar.dependsOn(testJar)
+
+tasks {
+    runServer {
+        minecraftVersion("1.18.2")
+    }
+}
+
+runServer.dependsOn(moveJar)
+
 def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
@@ -62,16 +84,4 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
-}
-
-tasks.register('moveJar', Copy) {
-    from layout.buildDirectory.dir("$buildDir/libs")
-    include "**/*.jar"
-    into layout.projectDirectory.dir("/run/plugins")
-}
-
-tasks.register('testJar', ShadowJar) {
-    archiveClassifier.set("test")
-    from sourceSets.main.java, sourceSets.test.output
-    configurations = [project.configurations.testRuntimeClasspath]
 }
