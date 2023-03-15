@@ -3,21 +3,16 @@ package fr.atlasworld.content.listeners;
 import de.tr7zw.nbtapi.NBTBlock;
 import fr.atlasworld.content.ContentAdder;
 import fr.atlasworld.content.api.block.CustomBlock;
-import fr.atlasworld.content.nbt.BlockNbtKeys;
-import fr.atlasworld.content.registering.Registry;
-import fr.atlasworld.content.utils.WorldUtils;
-import io.papermc.paper.event.entity.EntityMoveEvent;
+import fr.atlasworld.content.nbt.ContentNbtKeys;
+import fr.atlasworld.content.world.WorldUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-
-import java.util.Objects;
 
 public class BlockEventsListener implements Listener {
     @EventHandler
@@ -27,47 +22,51 @@ public class BlockEventsListener implements Listener {
 
     @EventHandler
     public void onBlockPlaced(BlockPlaceEvent event) {
-        if (event.getBlock().getType().equals(Material.NOTE_BLOCK) && !CustomBlock.isCustomBlock(event.getBlock())) {
+        if (event.getBlock().getType() == Material.NOTE_BLOCK && !CustomBlock.isCustomBlock(event.getBlock())) {
             event.getPlayer().sendMessage(ContentAdder.prefix.append(Component.translatable("chat." + ContentAdder.namespace + ".can_not_place_note_block").color(TextColor.color(192, 0, 0))));
             event.setCancelled(true);
         }
     }
 
-
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.getBlock().getType().equals(Material.NOTE_BLOCK) && CustomBlock.isCustomBlock(event.getBlock())) {
+        if (event.getBlock().getType() == Material.NOTE_BLOCK && CustomBlock.isCustomBlock(event.getBlock())) {
             event.setCancelled(true);
-            CustomBlock customBlock = CustomBlock.getCustomBlock(event.getBlock());
-            CustomBlock.removeCustomBlockByPlayer(event.getBlock(), event.getPlayer());
+            CustomBlock cBlock = CustomBlock.getCustomBlock(event.getBlock());
 
-            if (customBlock.getAsItem() != null && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), customBlock.getAsItem());
+            CustomBlock.removeCustomBlock(event.getBlock(), Material.AIR);
+            cBlock.onBlockDestroyedByPlayer(event.getPlayer(), event.getBlock().getWorld(), event.getBlock().getLocation());
+
+            if (cBlock.getAsItem() != null && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
+                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), cBlock.getAsItem());
             }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockExploded(BlockExplodeEvent event) {
-        if (event.getBlock().getType().equals(Material.NOTE_BLOCK) && CustomBlock.isCustomBlock(event.getBlock())) {
-            event.setCancelled(true);
-            CustomBlock customBlock = Objects.requireNonNull(CustomBlock.getCustomBlock(event.getBlock()));
-            CustomBlock.removeCustomBlockByExplosion(event.getBlock());
+        event.blockList().forEach(block -> {
+            if (block.getType() == Material.NOTE_BLOCK && CustomBlock.isCustomBlock(block)) {
+                event.setCancelled(true);
 
-            if (customBlock.getAsItem() != null) {
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), customBlock.getAsItem());
+                CustomBlock cBlock = CustomBlock.getCustomBlock(block);
+                CustomBlock.removeCustomBlock(block, Material.AIR);
+                cBlock.onBlockExploded(block.getWorld(), block.getLocation());
+
+                if (cBlock.getAsItem() != null) {
+                    block.getWorld().dropItemNaturally(block.getLocation(), cBlock.getAsItem());
+                }
             }
-        }
+        });
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtendEvent(BlockPistonExtendEvent event) {
         event.getBlocks().forEach(block -> {
-            if (block.getType().equals(Material.NOTE_BLOCK) && CustomBlock.isCustomBlock(block)) {
+            if (block.getType() == Material.NOTE_BLOCK && CustomBlock.isCustomBlock(block) && !event.isCancelled()) {
                 if (CustomBlock.getCustomBlock(block).isPushable()) {
-                    new NBTBlock(WorldUtils.getLocationDirection(block.getLocation(), event.getDirection()).getBlock()).getData().setString(BlockNbtKeys.blockIdentifierKey, CustomBlock.getBlockIdentifier(block).toString());
-                    new NBTBlock(block).getData().setString(BlockNbtKeys.blockIdentifierKey, "");
+                    new NBTBlock(WorldUtils.applyFaceMod(block.getLocation(), event.getDirection()).getBlock()).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, CustomBlock.getBlockIdentifier(block).toString());
+                    new NBTBlock(block).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, "");
                     return;
                 }
                 event.setCancelled(true);
@@ -75,13 +74,13 @@ public class BlockEventsListener implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPistonRetractEvent(BlockPistonRetractEvent event) {
         event.getBlocks().forEach(block -> {
-            if (block.getType().equals(Material.NOTE_BLOCK) && CustomBlock.isCustomBlock(block)) {
+            if (block.getType() == Material.NOTE_BLOCK && CustomBlock.isCustomBlock(block) && !event.isCancelled()) {
                 if (CustomBlock.getCustomBlock(block).isPushable()) {
-                    new NBTBlock(WorldUtils.getLocationDirection(block.getLocation(), event.getDirection()).getBlock()).getData().setString(BlockNbtKeys.blockIdentifierKey, CustomBlock.getBlockIdentifier(block).toString());
-                    new NBTBlock(block).getData().setString(BlockNbtKeys.blockIdentifierKey, "");
+                    new NBTBlock(WorldUtils.applyFaceMod(block.getLocation(), event.getDirection()).getBlock()).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, CustomBlock.getBlockIdentifier(block).toString());
+                    new NBTBlock(block).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, "");
                     return;
                 }
                 event.setCancelled(true);

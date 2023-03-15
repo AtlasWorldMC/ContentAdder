@@ -2,7 +2,9 @@ package fr.atlasworld.content.listeners;
 
 import fr.atlasworld.content.api.block.CustomBlock;
 import fr.atlasworld.content.registering.Registry;
+import fr.atlasworld.content.world.WorldUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -11,7 +13,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 public class PlayerEventsListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction().isRightClick() && event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.NOTE_BLOCK)){
+        if (event.getAction().isRightClick() && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.NOTE_BLOCK){
             event.setCancelled(true);
         }
 
@@ -24,7 +26,11 @@ public class PlayerEventsListener implements Listener {
         }
 
         if (event.getClickedBlock() != null && CustomBlock.isCustomBlock(event.getClickedBlock())) {
-            CustomBlock.getCustomBlock(event.getClickedBlock()).onPlayerInteract(event.getPlayer(), event.getPlayer().getWorld(), event.getClickedBlock().getLocation());
+            if (event.getPlayer().isSneaking()) {
+                Player player = event.getPlayer();
+                if (!player.getInventory().getItemInMainHand().getType().isBlock()) return;
+                WorldUtils.applyFaceMod(event.getClickedBlock().getLocation(), event.getBlockFace()).getBlock().setType(player.getInventory().getItemInMainHand().getType());
+            } else CustomBlock.getCustomBlock(event.getClickedBlock()).onPlayerInteract(event.getPlayer(), event.getPlayer().getWorld(), event.getClickedBlock().getLocation(), event.getBlockFace());
         }
     }
 

@@ -13,8 +13,4 @@ public class TestItems {
 
     public static final CustomItem TEST_ITEM = ITEMS.register("test_item",
             () -> new MyCustomTestItem(Material.STICK, new ItemProperties()));
-
-    public static void register() {
-        ContentAdderTest.logger.info("Registered Items!");
-    }
 }

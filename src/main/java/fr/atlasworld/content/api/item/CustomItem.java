@@ -64,7 +64,7 @@ public class CustomItem {
     }
 
     public boolean isSame(ItemStack item) {
-        return item.getType().equals(parent) && item.getItemMeta().getCustomModelData() == customModelData;
+        return item.getType() == parent && item.getItemMeta().getCustomModelData() == customModelData;
     }
 
     public boolean isFireResistant() {
@@ -84,7 +84,7 @@ public class CustomItem {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof CustomItem cItem) {
-            return Objects.equals(Registry.ITEM.getIdentifier(this), Registry.ITEM.getIdentifier(cItem)) && cItem.getCustomModelData() == this.getCustomModelData();
+            return Registry.ITEM.getIdentifier(this).equals(Registry.ITEM.getIdentifier(cItem)) && cItem.getCustomModelData() == this.getCustomModelData();
         }
         if (obj instanceof ItemStack vItem) {
             return isSame(vItem);

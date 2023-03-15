@@ -4,20 +4,19 @@ import de.tr7zw.nbtapi.NBTBlock;
 import fr.atlasworld.content.api.utils.Identifier;
 import fr.atlasworld.content.api.utils.MaterialColor;
 import fr.atlasworld.content.api.sound.SoundGroup;
-import fr.atlasworld.content.nbt.BlockNbtKeys;
+import fr.atlasworld.content.nbt.ContentNbtKeys;
 import fr.atlasworld.content.registering.Registry;
+import fr.atlasworld.content.world.WorldUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
 public class CustomBlock {
     protected final BlockProperties properties;
@@ -75,68 +74,47 @@ public class CustomBlock {
         return null;
     }
 
-    public Block placeBlock(Block block) {
-        return placeBlock(block, this);
-    }
-
     public void onPlaced(Block block, World world, Location location) {}
-    public void onPlayerInteract(Player player, World world, Location location) {}
+    public void onPlayerInteract(Player player, World world, Location location, BlockFace face) {
+        if (!player.getInventory().getItemInMainHand().getType().isBlock()) return;
+        WorldUtils.applyFaceMod(location, face).getBlock().setType(player.getInventory().getItemInMainHand().getType());
+    }
     public void onBlockDestroyedByPlayer(Player player, World world, Location oldLocation) {}
     public void onBlockExploded(World world, Location oldLocation) {}
 
+    public static void removeCustomBlock(Block block, Material replace) {
+        if (!isCustomBlock(block)) {
+            throw new IllegalStateException("Given Block isn't a custom block!");
+        }
 
-    public static Block removeCustomBlockByPlayer(Block block, Player player) {
-        //Fire event
-        Objects.requireNonNull(getCustomBlock(block)).onBlockDestroyedByPlayer(player, block.getWorld(), block.getLocation());
-
-        return removeCustomBlock(block);
-    }
-
-    public static Block removeCustomBlockByExplosion(Block block) {
-        //Fire event
-        Objects.requireNonNull(getCustomBlock(block)).onBlockExploded(block.getWorld(), block.getLocation());
-
-        return removeCustomBlock(block);
-    }
-
-    public static Block removeCustomBlock(Block block) {
         //Remove Stored NBT Data
-        new NBTBlock(block).getData().setString(BlockNbtKeys.blockIdentifierKey, "");
-        block.setType(Material.AIR);
-
-        return block;
+        new NBTBlock(block).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, "");
+        block.setType(replace);
     }
 
-    public static Block placeBlock(Block block, CustomBlock cBlock) {
-        Identifier cBlockId = Registry.BLOCK.getIdentifier(cBlock);
-        if (cBlockId == null) throw new IllegalArgumentException("Unable to get CustomBlock Identifier!");
+    public void place(Block block) {
+        new NBTBlock(block).getData().setString(ContentNbtKeys.Block.blockIdentifierKey, getIdentifier().toString());
+        block.setType(Material.NOTE_BLOCK, true);
 
-        //Block Data
-        CustomBlockState blockState = Registry.BLOCK.getBlockState(cBlockId);
-        block.setType(Material.NOTE_BLOCK, false);
-        NoteBlock placedBlockState = (NoteBlock) block.getBlockData();
-        placedBlockState.setInstrument(CustomBlockState.getInstrument(blockState.getInstrument()));
-        placedBlockState.setNote(new Note(blockState.getNote()));
-        placedBlockState.setPowered(blockState.isPowered());
-        block.setBlockData(placedBlockState, false);
+        //Block State
+        CustomBlockState state = Registry.BLOCK.getBlockState(getIdentifier());
+        NoteBlock blockData = (NoteBlock) block.getBlockData();
+        blockData.setInstrument(CustomBlockState.getInstrument(state.getInstrument()));
+        blockData.setNote(new Note(state.getNote()));
+        blockData.setPowered(state.isPowered());
+        block.setBlockData(blockData, false);
+    }
 
-        new NBTBlock(block).getData().setString(BlockNbtKeys.blockIdentifierKey, cBlockId.toString());
-
-        //Effects
-        block.getWorld().playSound(block.getLocation(), cBlock.getBlockSounds().getPlaceSound(), 1F, 0.8F);
-
-        //Fire Event
-        cBlock.onPlaced(block, block.getWorld(), block.getLocation());
-
-        return block;
+    public Identifier getIdentifier() {
+        return Registry.BLOCK.getIdentifier(this);
     }
 
     public static boolean isCustomBlock(Block block) {
-        return !new NBTBlock(block).getData().getString(BlockNbtKeys.blockIdentifierKey).isEmpty();
+        return !new NBTBlock(block).getData().getString(ContentNbtKeys.Block.blockIdentifierKey).isEmpty();
     }
 
     public static @Nullable CustomBlock getCustomBlock(Block block) {
-        return Registry.BLOCK.getEntry(new Identifier(new NBTBlock(block).getData().getString(BlockNbtKeys.blockIdentifierKey)));
+        return Registry.BLOCK.getEntry(new Identifier(new NBTBlock(block).getData().getString(ContentNbtKeys.Block.blockIdentifierKey)));
     }
 
     public static @Nullable Identifier getBlockIdentifier(Block block) {
