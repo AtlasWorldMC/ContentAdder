@@ -1,8 +1,11 @@
 package fr.atlasworld.content.datagen;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fr.atlasworld.content.ContentAdder;
 import fr.atlasworld.content.api.item.CustomItem;
 import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.datagen.models.ItemModelFile;
 import fr.atlasworld.content.registering.Registry;
 
 import java.io.*;
@@ -117,7 +120,16 @@ public class AssetsManager {
                 "item", item.getParent().getKey().getKey() + ".json").toFile();
         if (!modelFile.exists()) throw new RuntimeException("Unable to find " + itemIdentifier + " parent item model file!");
 
+        try {
+            ItemModelFile model = ItemModelFile.getModelFromString(new String(Files.readAllBytes(modelFile.toPath())));
+            model.addOverride("custom_model_data", item.getCustomModelData(), new Identifier(itemIdentifier.getNamespace(), "item/" + itemIdentifier.getName()));
 
+            FileWriter writer = new FileWriter(modelFile);
+            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(model.toJson()));
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void modifyItemModelFiles() {

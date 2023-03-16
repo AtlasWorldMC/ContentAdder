@@ -31,13 +31,12 @@ repositories {
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT"
     compileOnly "de.tr7zw:item-nbt-api-plugin:${nbt_api_version}"
-    compileOnly "com.comphenix.protocol:ProtocolLib:${protocol_version}"
     compileOnly 'com.pushtorefresh:javac-warning-annotation:1.0.0'
+    implementation "io.javalin:javalin:${javalin_version}"
 
     //Test
     testCompileOnly "io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT"
     testCompileOnly "de.tr7zw:item-nbt-api-plugin:${nbt_api_version}"
-    testCompileOnly "com.comphenix.protocol:ProtocolLib:${protocol_version}"
 }
 
 tasks.register('testJar', ShadowJar) {

@@ -5,13 +5,13 @@ public class Identifier {
     private final String name;
 
     public Identifier(String namespace, String name) {
-        this.namespace = namespace;
-        this.name = name;
+        this.namespace = namespace.toLowerCase();
+        this.name = name.toLowerCase();
     }
 
     public Identifier(String asString) {
         if (!asString.contains(":")) throw new IllegalArgumentException("Invalid Identifier! it must be 'namespace:name': " + asString);
-        String[] splitIdentifier = asString.split(":");
+        String[] splitIdentifier = asString.toLowerCase().split(":");
         if (splitIdentifier.length > 2) throw new IllegalArgumentException("Only one ':' can be used in a Identifier! 'namespace:name'!");
         this.namespace = splitIdentifier[0];
         this.name = splitIdentifier[1];
