@@ -9,4 +9,3 @@ load: STARTUP
 depend:
   - NBTAPI
   - ContentAdder
-  - ProtocolLib

@@ -26,4 +26,8 @@ public class TestBlocks {
         TestItems.ITEMS.register(name, () -> new CustomBlockItem(itemParent, new ItemProperties(), block));
         return block;
     }
+
+    public static void register() {
+        ContentAdderTest.logger.info("Registered Blocks!");
+    }
 }

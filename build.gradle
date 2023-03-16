@@ -49,10 +49,13 @@ tasks.register('testJar', ShadowJar) {
 tasks.register('moveJar', Copy) {
     from layout.buildDirectory.dir("$buildDir/libs")
     include "ContentAdder-${version}-test.jar"
+    include "ContentAdder-${version}-all.jar"
     into layout.projectDirectory.dir("/run/plugins")
 }
+compileJava.dependsOn(clean)
 moveJar.dependsOn(testJar)
-
+moveJar.dependsOn(shadowJar)
+build.dependsOn(shadowJar)
 tasks {
     runServer {
         minecraftVersion("1.18.2")

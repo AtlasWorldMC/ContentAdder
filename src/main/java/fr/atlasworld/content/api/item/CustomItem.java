@@ -84,7 +84,7 @@ public class CustomItem {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof CustomItem cItem) {
-            return Registry.ITEM.getIdentifier(this).equals(Registry.ITEM.getIdentifier(cItem)) && cItem.getCustomModelData() == this.getCustomModelData();
+            return cItem.getParent() == this.getParent() && cItem.getCustomModelData() == this.getCustomModelData();
         }
         if (obj instanceof ItemStack vItem) {
             return isSame(vItem);

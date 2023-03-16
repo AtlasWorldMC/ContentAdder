@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "instrument=harp,note=1,powered=false": {
-      "model": "content_adder:block/example_block"
-    }
-  }
-}

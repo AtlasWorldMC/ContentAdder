@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "instrument=harp,note=0,powered=false": {
+      "model": "minecraft:block/note_block"
+    }
+  }
+}

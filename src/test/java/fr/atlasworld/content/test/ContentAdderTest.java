@@ -1,6 +1,9 @@
 package fr.atlasworld.content.test;
 
+import fr.atlasworld.content.test.common.TestBlocks;
+import fr.atlasworld.content.test.common.TestItems;
 import fr.atlasworld.content.test.listeners.PlayerEvents;
+import fr.atlasworld.content.test.listeners.RegistrationEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +16,8 @@ public class ContentAdderTest extends JavaPlugin {
     @Override
     public void onEnable() {
         logger = getSLF4JLogger();
-        registerListeners(new PlayerEvents());
+
+        registerListeners(new PlayerEvents(), new RegistrationEvents());
     }
 
     private void registerListeners(Listener... listeners) {
