@@ -3,6 +3,7 @@ package fr.atlasworld.content.listeners;
 import fr.atlasworld.content.datagen.AssetsManager;
 import fr.atlasworld.content.events.registration.RegisterBlockEvent;
 import fr.atlasworld.content.events.registration.RegisterItemEvent;
+import fr.atlasworld.content.web.WebServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,12 @@ public class ServerEventsListener implements Listener {
     public void onServerStart(ServerLoadEvent event) {
         Bukkit.getPluginManager().callEvent(new RegisterItemEvent());
         Bukkit.getPluginManager().callEvent(new RegisterBlockEvent());
+
+        //Assets
         AssetsManager.modifyItemModelFiles();
+
+        //Do Last
+        AssetsManager.enableTexturePack();
+        WebServer.server.startServer();
     }
 }

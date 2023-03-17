@@ -1,6 +1,6 @@
 {
     "parent": "minecraft:item/handheld",
     "textures": {
-        "layer0": "content_adder:item/example_item"
+        "layer0": "content_adder_test:item/test_item"
     }
 }

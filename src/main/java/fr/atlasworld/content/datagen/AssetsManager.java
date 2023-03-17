@@ -1,7 +1,7 @@
 package fr.atlasworld.content.datagen;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import fr.atlasworld.content.ContentAdder;
 import fr.atlasworld.content.api.item.CustomItem;
 import fr.atlasworld.content.api.utils.Identifier;
@@ -13,16 +13,41 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class AssetsManager {
-    private static final Path texturePackFolderPath = Paths.get(ContentAdder.plugin.getDataFolder().getPath(), "temp");
-    public static void generateTexturePack() {
+    public static final Path texturePackFolderPath = Paths.get(ContentAdder.plugin.getDataFolder().getPath(), "temp", "pack");
+    public static final File texturePack = Paths.get(ContentAdder.plugin.getDataFolder().getPath(), "web", "pack.zip").toFile();
+    public static void prepareTexturePack() {
         try {
             ContentAdder.logger.info("Preparing texture pack generation..");
-            prepareTexturePack();
+            if (!Files.exists(texturePackFolderPath)) {
+                Files.createDirectories(texturePackFolderPath);
+
+            }
+
+            //Gen Texture pack tree
+            Path assetsRootPath = Paths.get(texturePackFolderPath.toString(), "assets");
+            Files.createDirectories(assetsRootPath);
+            Files.createDirectories(Paths.get(texturePackFolderPath.getParent().getParent().toString(), "web"));
+
+            //Gen pack.mcmeta
+            JsonObject packMeta = new JsonObject();
+            JsonObject pack = new JsonObject();
+            pack.addProperty("pack_format", 8);
+            pack.addProperty("description", "Content Adder Assets!");
+            packMeta.add("pack", pack);
+
+            try {
+                FileWriter writer = new FileWriter(texturePackFolderPath + "/pack.mcmeta");
+                writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(packMeta));
+                writer.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,18 +72,7 @@ public class AssetsManager {
         ContentAdder.logger.info("Successfully loaded assets!");
     }
 
-    private static void prepareTexturePack() throws IOException {
-        if (!Files.exists(texturePackFolderPath)) {
-            Files.createDirectories(texturePackFolderPath);
-
-        }
-
-        //Gen Texture pack tree
-        Path minecraftRootPath = Paths.get(texturePackFolderPath.toString(), "pack", "assets");
-        Files.createDirectories(minecraftRootPath);
-    }
-
-    private static boolean hasAssetsFolder(File file) {
+    public static boolean hasAssetsFolder(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             for (ZipEntry entry : Collections.list(zipFile.entries())) {
                 if (entry.getName().equals("assets/") && entry.isDirectory()) {
@@ -138,6 +152,27 @@ public class AssetsManager {
     }
 
     private static void cleanTexturePack() {
+        try {
+            if (Files.exists(texturePackFolderPath.getParent())) {
+                Files.walk(texturePackFolderPath.getParent())
+                        .sorted(Comparator.reverseOrder())
+                        .forEach(file -> {
+                            try {
+                                Files.delete(file);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+            }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public static void enableTexturePack() {
+        ZipUtils.zipFolderContent(texturePackFolderPath.toString(), texturePack.toString());
+        cleanTexturePack();
+    }
+
 }

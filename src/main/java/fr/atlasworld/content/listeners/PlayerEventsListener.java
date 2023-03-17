@@ -1,14 +1,23 @@
 package fr.atlasworld.content.listeners;
 
 import fr.atlasworld.content.api.block.CustomBlock;
+import fr.atlasworld.content.config.ConfigManager;
+import fr.atlasworld.content.datagen.ZipUtils;
 import fr.atlasworld.content.registering.Registry;
+import fr.atlasworld.content.web.WebServer;
 import fr.atlasworld.content.world.WorldUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.io.File;
+
+import static fr.atlasworld.content.datagen.AssetsManager.texturePackFolderPath;
 
 public class PlayerEventsListener implements Listener {
     @EventHandler
@@ -43,5 +52,15 @@ public class PlayerEventsListener implements Listener {
                 item.onItemHeld(event.getPlayer(), event.getNewSlot(), event.getPreviousSlot());
             }
         });
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (WebServer.server.isActive()) {
+            event.getPlayer().setResourcePack("http://" + ConfigManager.get().getString("WebServerIP") + ":" + ConfigManager.get().getInt("WebServerPort") + "/pack",
+                    ZipUtils.getZipHash(new File(texturePackFolderPath.getParent().toString() + "/web/pack.zip").getPath()), true);
+        } else {
+            event.getPlayer().kick(Component.text("Please wait, Texture Pack is still generating!"));
+        }
     }
 }
