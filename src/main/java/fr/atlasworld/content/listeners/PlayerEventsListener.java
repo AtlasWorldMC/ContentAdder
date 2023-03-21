@@ -2,6 +2,7 @@ package fr.atlasworld.content.listeners;
 
 import fr.atlasworld.content.api.block.CustomBlock;
 import fr.atlasworld.content.config.ConfigManager;
+import fr.atlasworld.content.datagen.AssetsManager;
 import fr.atlasworld.content.datagen.ZipUtils;
 import fr.atlasworld.content.registering.Registry;
 import fr.atlasworld.content.web.WebServer;
@@ -14,10 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.io.File;
-
-import static fr.atlasworld.content.datagen.AssetsManager.texturePackFolderPath;
 
 public class PlayerEventsListener implements Listener {
     @EventHandler
@@ -58,7 +55,7 @@ public class PlayerEventsListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (WebServer.server.isActive()) {
             event.getPlayer().setResourcePack("http://" + ConfigManager.get().getString("WebServerIP") + ":" + ConfigManager.get().getInt("WebServerPort") + "/pack",
-                    ZipUtils.getZipHash(new File(texturePackFolderPath.getParent().toString() + "/web/pack.zip").getPath()), true);
+                    ZipUtils.getZipHash(AssetsManager.texturePack.getPath()), true);
         } else {
             event.getPlayer().kick(Component.text("Please wait, Texture Pack is still generating!"));
         }

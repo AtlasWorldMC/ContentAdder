@@ -22,15 +22,15 @@ public class AssetsManager {
     public static final Path texturePackFolderPath = Paths.get(ContentAdder.plugin.getDataFolder().getPath(), "temp", "pack");
     public static final File texturePack = Paths.get(ContentAdder.plugin.getDataFolder().getPath(), "web", "pack.zip").toFile();
     public static void prepareTexturePack() {
+        Path assets = Path.of(texturePackFolderPath.toString(), "assets");
         try {
             ContentAdder.logger.info("Preparing texture pack generation..");
             if (!Files.exists(texturePackFolderPath)) {
                 Files.createDirectories(texturePackFolderPath);
-
             }
 
             //Gen Texture pack tree
-            Path assetsRootPath = Paths.get(texturePackFolderPath.toString(), "assets");
+            Path assetsRootPath = assets;
             Files.createDirectories(assetsRootPath);
             Files.createDirectories(Paths.get(texturePackFolderPath.getParent().getParent().toString(), "web"));
 
@@ -62,7 +62,7 @@ public class AssetsManager {
                         " skipped, no assets found! (" + count + "/" + pluginFiles.length + ")");
             } else {
                 long methodStartedTime = System.currentTimeMillis();
-                copyPluginAssets(pluginFile, Path.of(texturePackFolderPath.toString(), "pack", "assets"));
+                copyPluginAssets(pluginFile, assets);
                 ContentAdder.logger.info(pluginFile.getName().substring(0, pluginFile.getName().lastIndexOf('.')) +
                         " assets loaded in " + (System.currentTimeMillis() - methodStartedTime) + "ms (" + count + "/" + pluginFiles.length + ")");
             }
@@ -147,7 +147,7 @@ public class AssetsManager {
     }
 
     public static void modifyItemModelFiles() {
-        Registry.ITEM.getEntries().forEach(item -> editMinecraftItemModel(item, Path.of(texturePackFolderPath.toString(), "pack", "assets")));
+        Registry.ITEM.getEntries().forEach(item -> editMinecraftItemModel(item, Path.of(texturePackFolderPath.toString(), "assets")));
         ContentAdder.logger.info("Successfully modified item model files!");
     }
 
@@ -171,8 +171,7 @@ public class AssetsManager {
     }
 
     public static void enableTexturePack() {
-        ZipUtils.zipFolderContent(texturePackFolderPath.toString(), texturePack.toString());
-        cleanTexturePack();
+        ZipUtils.generateZip(texturePackFolderPath.toString(), texturePack.toString());
     }
 
 }

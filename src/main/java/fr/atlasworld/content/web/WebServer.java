@@ -1,5 +1,6 @@
 package fr.atlasworld.content.web;
 
+import fr.atlasworld.content.ContentAdder;
 import fr.atlasworld.content.config.ConfigManager;
 import fr.atlasworld.content.datagen.AssetsManager;
 import io.javalin.Javalin;
@@ -7,6 +8,7 @@ import io.javalin.Javalin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 
 public class WebServer {
     public static final WebServer server = new WebServer();

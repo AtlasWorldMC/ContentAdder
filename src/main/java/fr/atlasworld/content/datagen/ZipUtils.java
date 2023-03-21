@@ -1,59 +1,61 @@
 package fr.atlasworld.content.datagen;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.zip.*;
 public class ZipUtils {
-    public static void zipFolderContent(String sourceFolderPath, String destinationZipPath) {
+    //Big thanks to Malfrador#0923 (https://github.com/Malfrador) for the working zip code!
+    public static void generateZip(String srcFolder, String out) {
         try {
-            FileOutputStream fos = new FileOutputStream(destinationZipPath);
-            ZipOutputStream zos = new ZipOutputStream(fos);
+            System.out.println(srcFolder);
+            File file = new File(srcFolder);
+            FileOutputStream fileOutputStream = new FileOutputStream(out);
+            ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream);
+            File[] arrayOfFile = file.listFiles();
+            if (arrayOfFile == null)
+                return;
+            System.out.println(Arrays.toString(arrayOfFile));
+            for (File file1 : arrayOfFile)
+                zipFile(file1, file1.getName(), zipOutputStream);
+            zipOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException iOException) {
+            iOException.printStackTrace();
+        }
+    }
 
-            for (File f : new File(sourceFolderPath).listFiles()) {
-                if (f.isDirectory()) {
-                    addFolderToZip("", f.getPath(), zos);
-                } else {
-                    addFileToZip(f.getPath(), f.getName(), zos);
+    //Big thanks to Malfrador#0923 (https://github.com/Malfrador) for the working zip code!
+    private static void zipFile(File paramFile, String paramString, ZipOutputStream paramZipOutputStream) throws IOException {
+        if (paramFile.isHidden())
+            return;
+        if (paramFile.isDirectory()) {
+            if (paramString.endsWith("/")) {
+                paramZipOutputStream.putNextEntry(new ZipEntry(paramString));
+            } else {
+                paramZipOutputStream.putNextEntry(new ZipEntry(paramString + "/"));
+            }
+            paramZipOutputStream.closeEntry();
+            File[] arrayOfFile = paramFile.listFiles();
+            if (arrayOfFile != null)
+                for (File file : arrayOfFile) {
+                    zipFile(file, paramString + "/" + file.getName(), paramZipOutputStream);
                 }
-            }
-
-            zos.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return;
         }
-    }
-
-    public static void addFileToZip(String filePath, String entryName, ZipOutputStream zos) throws IOException {
-        FileInputStream fis = new FileInputStream(filePath);
-        ZipEntry zipEntry = new ZipEntry(entryName.replace("\\", "/"));
-        zos.putNextEntry(zipEntry);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = fis.read(buffer)) > 0) {
-            zos.write(buffer, 0, length);
-        }
-        zos.closeEntry();
-        fis.close();
-    }
-
-    private static void addFolderToZip(String parentPath, String folderPath, ZipOutputStream zos) throws IOException {
-        File folder = new File(folderPath);
-        if (folder.isDirectory()) {
-            if (!parentPath.equals("")) {
-                parentPath += "/";
-            }
-            parentPath += folder.getName();
-            for (String fileName : folder.list()) {
-                addFolderToZip(parentPath, folderPath + "/" + fileName, zos);
-            }
-        } else {
-            addFileToZip(folderPath, parentPath + "/" + folder.getName(), zos);
-        }
+        FileInputStream fileInputStream = new FileInputStream(paramFile);
+        ZipEntry zipEntry = new ZipEntry(paramString);
+        paramZipOutputStream.putNextEntry(zipEntry);
+        byte[] arrayOfByte = new byte[1024];
+        int i;
+        while ((i = fileInputStream.read(arrayOfByte)) >= 0)
+            paramZipOutputStream.write(arrayOfByte, 0, i);
+        fileInputStream.close();
     }
 
     public static byte[] getZipHash(String filePath) {
