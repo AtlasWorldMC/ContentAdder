@@ -1,6 +1,6 @@
 package fr.atlasworld.content.registering;
 
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 
 import java.util.function.Supplier;
 

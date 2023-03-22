@@ -1,7 +1,7 @@
 package fr.atlasworld.content.nbt;
 
 import fr.atlasworld.content.ContentAdder;
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 
 public class ContentNbtKeys {
     public static class Block {

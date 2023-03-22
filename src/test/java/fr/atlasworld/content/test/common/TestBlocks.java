@@ -3,7 +3,7 @@ package fr.atlasworld.content.test.common;
 import fr.atlasworld.content.test.ContentAdderTest;
 import fr.atlasworld.content.api.block.BlockProperties;
 import fr.atlasworld.content.api.block.CustomBlock;
-import fr.atlasworld.content.api.utils.MaterialColor;
+import fr.atlasworld.content.api.block.MaterialColor;
 import fr.atlasworld.content.api.item.CustomBlockItem;
 import fr.atlasworld.content.api.item.ItemProperties;
 import fr.atlasworld.content.api.sound.SoundGroup;

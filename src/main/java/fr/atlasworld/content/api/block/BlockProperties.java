@@ -1,6 +1,5 @@
 package fr.atlasworld.content.api.block;
 
-import fr.atlasworld.content.api.utils.MaterialColor;
 import fr.atlasworld.content.api.sound.SoundGroup;
 import org.bukkit.Material;
 

@@ -1,7 +1,7 @@
 package fr.atlasworld.content.registering.registeries;
 
 import fr.atlasworld.content.ContentAdder;
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 import fr.atlasworld.content.api.item.CustomItem;
 import fr.atlasworld.content.registering.RegistryEntry;
 import fr.atlasworld.content.registering.RegistryEventListener;

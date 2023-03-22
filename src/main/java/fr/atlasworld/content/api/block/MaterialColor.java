@@ -1,4 +1,4 @@
-package fr.atlasworld.content.api.utils;
+package fr.atlasworld.content.api.block;
 
 public class MaterialColor {
     public static final MaterialColor NONE = new MaterialColor(0, 0);

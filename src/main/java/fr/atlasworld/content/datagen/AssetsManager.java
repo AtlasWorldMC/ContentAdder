@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import fr.atlasworld.content.ContentAdder;
 import fr.atlasworld.content.api.item.CustomItem;
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 import fr.atlasworld.content.datagen.models.ItemModelFile;
 import fr.atlasworld.content.registering.Registry;
 

@@ -3,7 +3,7 @@ package fr.atlasworld.content.datagen.models;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package fr.atlasworld.content.api.utils;
+package fr.atlasworld.content.api;
 
 public class Identifier {
     private final String namespace;

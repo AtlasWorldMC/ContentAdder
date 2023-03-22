@@ -1,8 +1,7 @@
 package fr.atlasworld.content.api.block;
 
 import de.tr7zw.nbtapi.NBTBlock;
-import fr.atlasworld.content.api.utils.Identifier;
-import fr.atlasworld.content.api.utils.MaterialColor;
+import fr.atlasworld.content.api.Identifier;
 import fr.atlasworld.content.api.sound.SoundGroup;
 import fr.atlasworld.content.nbt.ContentNbtKeys;
 import fr.atlasworld.content.registering.Registry;

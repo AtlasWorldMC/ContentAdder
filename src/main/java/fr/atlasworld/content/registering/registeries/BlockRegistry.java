@@ -1,7 +1,7 @@
 package fr.atlasworld.content.registering.registeries;
 
 import fr.atlasworld.content.ContentAdder;
-import fr.atlasworld.content.api.utils.Identifier;
+import fr.atlasworld.content.api.Identifier;
 import fr.atlasworld.content.api.block.CustomBlock;
 import fr.atlasworld.content.api.block.CustomBlockState;
 import fr.atlasworld.content.registering.RegistryEntry;
